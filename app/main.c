@@ -24,6 +24,8 @@ int main(void)
         }
 
         printf("%s: command not found\n", input_buffer);
+        printf("$ ");
+        fflush(stdout);
     }
     return 0;
 }
