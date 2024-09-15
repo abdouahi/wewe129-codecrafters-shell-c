@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 // Function to check if a file exists and is executable
 int is_executable(const char *path) { return access(path, X_OK) == 0; }
@@ -70,9 +71,34 @@ int main() {
       }
       continue;
     }
-    // Print the command not found message
-    printf("%s: command not found\n", input);
-
+    // Split the input into command and arguments
+    char *command = strtok(input, " ");
+    char *args[100];
+    int arg_count = 0;
+    while (command != NULL) {
+      args[arg_count++] = command;
+      command = strtok(NULL, " ");
+    }
+    args[arg_count] = NULL;
+    // Find the command in the PATH
+    char *path = find_in_path(args[0]);
+    if (path != NULL) {
+      // Execute the command
+      pid_t pid = fork();
+      if (pid == 0) {
+        // Child process
+        execv(path, args);
+        // If execv returns, it means an error occurred
+        perror("execv");
+        exit(1);
+      } else {
+        // Parent process
+        waitpid(pid, NULL, 0);
+      }
+      free(path);
+    } else {
+      printf("%s: command not found\n", args[0]);
+    }
   }
   return 0;
 }
