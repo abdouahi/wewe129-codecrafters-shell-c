@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 
 int main(void)
@@ -23,8 +24,12 @@ int main(void)
             continue;
         }
 
+        if (strcmp(input_buffer, "exit") == 0) {
+            exit(0);
+        }
+
         printf("%s: command not found\n", input_buffer);
     }
     return 0;
-    
+
 }
