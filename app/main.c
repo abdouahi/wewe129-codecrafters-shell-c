@@ -13,8 +13,11 @@ int main() {
         input[n - 1] = '\0';
         if (!strcmp(input, "exit 0"))
             exit(0);
+        if (!strncmp(input, "echo ", 5)) {
+            printf("%s\n", input + 5);
+            continue;
+        }
         printf("%s: command not found\n", input);
     }
     return 0;
 }
-
