@@ -46,32 +46,43 @@ int main() {
       continue;
     }
     // Check if the command is "exit 0"
-    if (strcmp(input, "exit 0") == 0) {
-      return 0;
+    // Check if the command is "exit 0"
+if (strcmp(input, "exit 0") == 0) {
+  return 0;
+}
+// Check if the command starts with "echo "
+if (strncmp(input, "echo ", 5) == 0) {
+  printf("%s\n", input + 5);
+  continue;
+}
+// Check if the command starts with "type "
+if (strncmp(input, "type ", 5) == 0) {
+  char *command = input + 5;
+  // Check for built-in commands
+  if (strcmp(command, "echo") == 0 || strcmp(command, "exit") == 0 ||
+      strcmp(command, "type") == 0 || strcmp(command, "pwd") == 0) {
+    printf("%s is a shell builtin\n", command);
+  } else {
+    char *path = find_in_path(command);
+    if (path) {
+      printf("%s is %s\n", command, path);
+      free(path);
+    } else {
+      printf("%s: not found\n", command);
     }
-    // Check if the command starts with "echo "
-    if (strncmp(input, "echo ", 5) == 0) {
-      printf("%s\n", input + 5);
-      continue;
-    }
-    // Check if the command starts with "type "
-    if (strncmp(input, "type ", 5) == 0) {
-      char *command = input + 5;
-      // Check for built-in commands
-      if (strcmp(command, "echo") == 0 || strcmp(command, "exit") == 0 ||
-          strcmp(command, "type") == 0) {
-        printf("%s is a shell builtin\n", command);
-      } else {
-        char *path = find_in_path(command);
-        if (path) {
-          printf("%s is %s\n", command, path);
-          free(path);
-        } else {
-          printf("%s: not found\n", command);
-        }
-      }
-      continue;
-    }
+  }
+  continue;
+}
+// Check if the command is "pwd"
+if (strcmp(input, "pwd") == 0) {
+  char cwd[PATH_MAX];
+  if (getcwd(cwd, sizeof(cwd)) != NULL) {
+    printf("%s\n", cwd);
+  } else {
+    perror("getcwd");
+  }
+  continue;
+}
     // Check if the command is "pwd"
     if (strcmp(input, "pwd") == 0) {
       char cwd[PATH_MAX];
