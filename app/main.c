@@ -25,7 +25,5 @@ int main(void)
 
         printf("%s: command not found\n", input_buffer);
     }
-
-
     return 0;
 }
