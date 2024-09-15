@@ -83,6 +83,15 @@ if (strcmp(input, "pwd") == 0) {
   }
   continue;
 }
+
+    // Check if the command is "cd"
+  if (strncmp(input, "cd ", 3) == 0) {
+    char *path = input + 3;
+    if (chdir(path) != 0) {
+      printf("cd: %s: No such file or directory\n", path);
+    }
+  continue;
+}
     // Check if the command is "pwd"
     if (strcmp(input, "pwd") == 0) {
       char cwd[PATH_MAX];
