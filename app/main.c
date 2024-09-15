@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
 // Function to check if a file exists and is executable
 int is_executable(const char *path) { return access(path, X_OK) == 0; }
+
 // Function to search for a command in the PATH
 char *find_in_path(const char *command) {
   char *path_env = getenv("PATH");
@@ -15,15 +17,16 @@ char *find_in_path(const char *command) {
   static char full_path[1024];
   while (dir != NULL) {
     snprintf(full_path, sizeof(full_path), "%s/%s", dir, command);
-    if (is_executable(full_path)) {
+    if (access(full_path, X_OK) == 0) {
       free(path_copy);
-      return full_path;
+      return strdup(full_path);
     }
     dir = strtok(NULL, ":");
   }
   free(path_copy);
   return NULL;
 }
+
 int main() {
   while (1) {
     // Print the shell prompt
@@ -57,11 +60,10 @@ int main() {
           strcmp(command, "type") == 0) {
         printf("%s is a shell builtin\n", command);
       } else {
-        printf("%s: not found\n", command);
-        // Search for the command in the PATH
         char *path = find_in_path(command);
         if (path) {
           printf("%s is %s\n", command, path);
+          free(path);
         } else {
           printf("%s: not found\n", command);
         }
