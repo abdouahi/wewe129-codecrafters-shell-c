@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <limits.h>
 
 // Function to check if a file exists and is executable
 int is_executable(const char *path) { return access(path, X_OK) == 0; }
@@ -68,6 +69,16 @@ int main() {
         } else {
           printf("%s: not found\n", command);
         }
+      }
+      continue;
+    }
+    // Check if the command is "pwd"
+    if (strcmp(input, "pwd") == 0) {
+      char cwd[PATH_MAX];
+      if (getcwd(cwd, sizeof(cwd)) != NULL) {
+        printf("%s\n", cwd);
+      } else {
+        perror("getcwd");
       }
       continue;
     }
