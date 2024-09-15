@@ -1,39 +1,49 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-
-#define BUILTIN_CMDS_NUM 3
-const char *builtin_cmds[BUILTIN_CMDS_NUM] = {"echo", "exit", "type"};
-
-int is_builtin(const char *cmd) {
-    for (int i = 0; i < BUILTIN_CMDS_NUM; ++i) {
-        if (!strcmp(builtin_cmds[i], cmd))
-            return 1;
-    }
+int repl() {
+  printf("$ ");
+  fflush(stdout);
+  // Wait for user input
+  char input[100];
+  char *s = fgets(input, 100, stdin);
+  if (s == 0) {
     return 0;
+  }
+  int l = strlen(input);
+  input[l - 1] = 0;
+  char *cmd = input;
+  char *args = input;
+  for (int i = 0; i < l; i++) {
+    if (input[i] == ' ') {
+      input[i] = 0;
+      if (i < l - 1) {
+        args += i + 1;
+      }
+      break;
+    }
+  }
+  if (0 == strcmp("exit", cmd)) {
+    return 0;
+  } else if (0 == strcmp("type", cmd)) {
+    if (0 == strcmp("echo", args) || 0 == strcmp("exit", args) ||
+        0 == strcmp("type", args)) {
+      printf("%s is a shell builtin\n", args);
+    } else {
+      printf("%s not found\n", args);
+    }
+  } else if (0 == strcmp("echo", cmd)) {
+    puts(args);
+    fflush(stdout);
+  } else {
+    printf("%s: command not found\n", input);
+    fflush(stdout);
+  }
+  fflush(stdout);
+  return 1;
 }
-
 int main() {
-
-    char input[100];
-    while (1) {
-        printf("$ ");
-        fflush(stdout);
-        fgets(input, 100, stdin);
-        int n = strlen(input);
-        input[n - 1] = '\0';
-        if (!strcmp(input, "exit 0"))
-            exit(0);
-        if (!strncmp(input, "type ", 5)) {
-            const char *cmd = input + 5;
-            if (is_builtin(cmd))
-                printf("%s is a shell builtin\n", cmd);
-            else
-                printf("%s: not found\n", cmd);
-            continue;
-        }
-        printf("%s: command not found\n", input);
-    }
-    return 0;
+  while (repl())
+    ;
+  return 0;
 }
 
