@@ -30,7 +30,7 @@ Follow these instructions to set up and run the shell on your local machine.
 
 2. **Compile the Shell**:
     ```sh
-    gcc app/main.c -o shell
+    gcc app/main.c -o shell.sh
     ```
 
 3. **Run the Shell**:
